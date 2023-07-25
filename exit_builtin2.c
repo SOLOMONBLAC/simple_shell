@@ -61,4 +61,3 @@ int main() {
     exit_with_status(status);
     return 0;
 }
-

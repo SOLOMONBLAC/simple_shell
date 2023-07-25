@@ -24,5 +24,8 @@ void exit_shell();
 void handle_command(const char* input);
 void run_shell();
 void env();
+char* my_getline(void);
+int executeCommand(const char *command, char *const arguments[]);
+void exit_with_status(int status);
 
 #endif /* SHELL_H */

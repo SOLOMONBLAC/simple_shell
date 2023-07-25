@@ -1,7 +1,8 @@
-#ifndef MYCOMMANDS_H
-#define MYCOMMANDS_H
+#ifndef MY_GETLINE_H
+#define MY_GETLINE_H
 
-int executeCommand(const char *command, char *const arguments[]);
+/* Function to read a line from standard input and return it as a dynamically allocated string */
+char* my_getline(void);
 
-#endif /* MYCOMMANDS_H */
+#endif /* MY_GETLINE_H */
 

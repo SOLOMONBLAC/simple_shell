@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "shell1.h"
+#include "shell.h"
 
 int main() {
     const char *command = "ls";  /* Replace this with the desired command */
