@@ -1,8 +1,11 @@
-#ifndef MY_GETLINE_H
-#define MY_GETLINE_H
+#ifndef SIMPLE_SHELL_H
+#define SIMPLE_SHELL_H
 
-/* Function to read a line from standard input and return it as a dynamically allocated string */
-char* my_getline(void);
+/* Function to execute a command in the shell */
+int execute_command(char *command);
 
-#endif /* MY_GETLINE_H */
+/* Function to handle the && and || logical operators in the shell */
+int handle_logical_operators(char *input);
+
+#endif /* SIMPLE_SHELL_H */
 

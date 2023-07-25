@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h> /* For open system call */
+#include <dirent.h> /* For opendir and readdir system calls */
+
+#define MAX_COMMANDS 10
+#define MAX_COMMAND_LENGTH 100
+
+int execute_command(char *command) {
+    int len = 0;
+    int num_args = 0;
+    char *args[MAX_COMMAND_LENGTH];
+    char *token;
+    pid_t pid;
+
+    /* Remove leading and trailing whitespaces */
+    while (*command == ' ') {
+        command++;
+    }
+
+    len = strlen(command);
+    while (len > 0 && command[len - 1] == ' ') {
+        command[--len] = '\0';
+    }
+
+    /* Tokenize the command to separate arguments */
+    token = strtok(command, " ");
+    while (token != NULL && num_args < MAX_COMMAND_LENGTH - 1) {
+        args[num_args++] = token;
+        token = strtok(NULL, " ");
+    }
+    args[num_args] = NULL;
+
+    /* Fork to create a child process */
+    pid = fork();
+    if (pid < 0) {
+        perror("Fork failed");
+    } else if (pid == 0) {
+        /* Child process: execute the command */
+        execvp(args[0], args);
+        perror("Exec failed");
+        _exit(1);
+    } else {
+        /* Parent process: wait for the child to finish */
+        int status;
+        waitpid(pid, &status, 0);
+
+        /* Return 1 if the command was successful, 0 otherwise */
+        return (status == 0) ? 1 : 0;
+    }
+
+    /* Return 1 for the compiler (will never reach this point) */
+    return 1;
+}
+
+int handle_logical_operators(char *input) {
+    char *commands[MAX_COMMANDS];
+    int num_commands = 0;
+    char *token;
+    int i;
+    int result = 1; /* Start with true (1) to handle the first command */
+
+    /* Tokenize the input string based on '&' and '|' delimiters */
+    token = strtok(input, "&|");
+    while (token != NULL && num_commands < MAX_COMMANDS) {
+        commands[num_commands++] = token;
+        token = strtok(NULL, "&|");
+    }
+
+    /* Execute each command conditionally based on the logical operators */
+    for (i = 0; i < num_commands; i++) {
+        int len = strlen(commands[i]);
+        char logical_operator = commands[i][len - 1];
+
+        /* Remove the logical operator from the command */
+        commands[i][len - 1] = '\0';
+
+        if (logical_operator == '&') {
+            /* Execute the command only if the previous command succeeded */
+            if (result) {
+                result = execute_command(commands[i]);
+            }
+        } else if (logical_operator == '|') {
+            /* Execute the command only if the previous command failed */
+            if (!result) {
+                result = execute_command(commands[i]);
+            }
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    char input[MAX_COMMAND_LENGTH];
+
+    write(STDOUT_FILENO, "Enter commands separated by '&' or '|': ", strlen("Enter commands separated by '&' or '|': "));
+    fgets(input, sizeof(input), stdin);
+
+    int result = handle_logical_operators(input);
+
+    /* Output the final result of the logical operators */
+    if (result) {
+        write(STDOUT_FILENO, "All commands succeeded!\n", strlen("All commands succeeded!\n"));
+    } else {
+        write(STDOUT_FILENO, "Some commands failed!\n", strlen("Some commands failed!\n"));
+    }
+
+    return 0;
+}
+

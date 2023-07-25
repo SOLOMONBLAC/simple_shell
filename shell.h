@@ -27,5 +27,7 @@ void env();
 char* my_getline(void);
 int executeCommand(const char *command, char *const arguments[]);
 void exit_with_status(int status);
+int cd_command(const char *directory);
+void execute_command(char *command);
 
 #endif /* SHELL_H */
