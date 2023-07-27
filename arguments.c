@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include <string.h>
-#include  "shell1.h"
+#include  "shell.h"
 
 /* Function to handle command-line arguments */ void handle_arguments(int argc, char *argv[]){
     if (argc > 1) {
