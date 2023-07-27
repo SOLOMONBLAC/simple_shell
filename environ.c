@@ -1,17 +1,23 @@
+#include <stdio.h>
+#include <unistd.h>
 #include "shell.h"
 
-/**
- * _myenv - prints the current environment
- * @info: Structure containing potential arguments. Used to maintain
- *          constant function prototype.
- * Return: Always 0
- */
-int _myenv(info_t *info)
-{
-	print_list_str(info->env);
-	return (0);
+extern char **environ;
+
+void env() {
+    char **env = environ;
+    while (*env) {
+        size_t len = 0;
+        while ((*env)[len] != '\0') {
+            len++;
+        }
+        write(STDOUT_FILENO, *env, len);
+        write(STDOUT_FILENO, "\n", 1);
+        env++;
+    }
 }
 
+<<<<<<< HEAD:environment_operations.c
 /**
  * _getenv - gets the value of an environ variable
  * @info: Structure containing potential arguments. Used to maintain
@@ -89,5 +95,10 @@ int populate_env_list(info_t *info)
 		add_node_end(&node, environ[i], 0);
 	info->env = node;
 	return (0);
+=======
+int main() {
+    env();
+    return 0;
+>>>>>>> parent of 5161c16... task test update:environ.c
 }
 
